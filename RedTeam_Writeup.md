@@ -62,7 +62,7 @@ The next exploit was discovered in a file within the secret folder called "conne
 
 Ryan's hashed password was copied and input into an online tool called Crack Station. The site uses rainbow tables to compare the input hash to precomputed hashes to "crack" the password. This hash was successfully cracked and privileges were escalated further to the CEO's account. 
 
-![crackstation] 
+![crackstation](![CrackStationPassword](https://user-images.githubusercontent.com/94092268/185767062-adf60e79-6909-4b18-ab6b-170e1abd8066.JPG) 
 
 ![webDavLogin](https://github.com/keeslonkf/Red-Team-vs.-Blue-Team/blob/39d081ca13b751d97885985216948dfe3114aa54/RedTeam_Images/webDavLogin.JPG) 
 
@@ -77,8 +77,6 @@ With the high-level access acquired from Ryan's credentials, a php script was up
 The ability to upload a .php script is a web misconfiguration vulnerability that was exploited. A general coding best practice is to never allow uploading to a web server unless that is apart of the web application's functionality to the client. If uploading is necessary, uploaded data should undergo scrutiny before being allowed on the web server to ensure the data does not contain malware. 
 
 Finally, a Local File Inclusion (LFI) vulnerability in the web server ensured the success of the reverse shell exploit. Local File Inclusion vulnerabilities work by allowing an uploaded file or script to be executed on the server. In this case, once the code is executed, it sends a meterpreter shell directly back to the attacking machine. This was accomplished using Metasploit in conjunction with the php script using the parameters below. 
-
-![msfSetup1] 
 
 ![meterpreterShell](https://github.com/keeslonkf/Red-Team-vs.-Blue-Team/blob/39d081ca13b751d97885985216948dfe3114aa54/RedTeam_Images/meterpreterShell.JPG) 
 
