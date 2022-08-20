@@ -2,7 +2,7 @@
 
 There are several steps involved with penetrating a network: Planning and Reconnaissance, Scanning, Exploitation, Post Exploitation, and Reporting. Once the network has been exploited there are a number of ways an attacker can abuse a system including stealing sensitive data, modifying data on the network, compromising the availability of data for a ransom and leaving a backdoor for perpetual access.
 
-![RedTeam_NetworkDiagram]
+![RedTeam_NetworkDiagram](https://github.com/keeslonkf/Red-Team-vs.-Blue-Team/blob/39d081ca13b751d97885985216948dfe3114aa54/RedTeam_Images/network_topology.JPG)
 
 This document contains the following details:
 - Description of the Topology
@@ -36,13 +36,55 @@ The assessment uncovered the following critical vulnerabiliies in the target:
 - Local File Inclusion (LFI): Attackers can execute the planted malware file to potentially gain a reverse shell on the web server
   - Impact: Discovered credentials can be used to potentially access sensitive data on the web server       
 
-### Exploitation
+### Recon
 
-Vulnerabilities were identified in the target by first site mapping the web server using a simple Firefox Browser and a Kali Linux tool called dirb. Dirb revealed an important URL on the server:"/webdav". ![dirb_scan] Through a public-facing sensitive data vulnerability, it was discovered that a secret directory hidden within the web server existed and was only accessible by employees. ![Secret_Folder] This prompted the idea of brute forcing employee credentials using the employees listed in the site’s “Meet Our Team” page. The intention was to find credentials to access this secret folder. This brute force attack was successfully executed using the Kali Linux tool “hydra” to obtain the credentials of employee Ashton and gain access to the secret folder. ![hydra] ![secretFolderLogin] ![secretFolder_Dir] . 
+Vulnerabilities were identified in the target by first site mapping the web server using a simple Firefox Browser and a Kali Linux tool called dirbuster. Dirbuster is a java application designed to brute force directories on web applications and web servers. Performing this recon revealed an important URL on the server:"/webdav".
 
-The next exploit was discovered in a file within the secret folder called "connect_to_corp_server". This file contained the hash of the CEO’s (Ryan) password and instructions on how to access another hidden directory within the server called “webdav”. ![webDavInstructions] Using a tool called Crack Station online, this hash was cracked and privileges were escalated further to the CEO's account. ![crackstation] ![webDavLogin] Next, a payload was constructed using msfvenom to create the reverse shell php script to be exploited on the target. ![msfvenomPayload] With the high-level access acquired from Ryan's credentials, a php script was uploaded to the web server to initiate the first step in establishing a reverse shell between the Capstone Server and the Kali attacking machine. ![uploadShellScript] The ability to upload a .php script is a web misconfiguration vulnerability that was exploited. 
+![dirbScan](https://github.com/keeslonkf/Red-Team-vs.-Blue-Team/blob/39d081ca13b751d97885985216948dfe3114aa54/RedTeam_Images/dirbScan.JPG)
 
-Finally, an LFI vulnerability ensured the success of exploiting the reverse shell vulnerability by allowing the script to be executed on the server. This was completed using Metasploit in conjunction with the php script using the parameters below. ![msfSetup1] ![meterpreterShell] Once inside, a more stable shell was first established using the command “shell” in the Meterpreter session. Basic linux commands like “cd” and “find” were utilized to search for files containing the word “flag” in the title.![flagComplete]
+Further "site-walking" was conducted by browsing directories in the web browser manually. Through a public-facing sensitive data vulnerability, it was discovered that a secret directory hidden within the web server existed and was only accessible by employees.
+
+![secretFolder](https://github.com/keeslonkf/Red-Team-vs.-Blue-Team/blob/39d081ca13b751d97885985216948dfe3114aa54/RedTeam_Images/secretFolder.JPG)
+
+## Exploitation
+
+After gathering useful information through recon, the findings prompted the idea of brute forcing employee credentials using the employees listed in the site’s “Meet Our Team” page. The intention was to find credentials to access this secret folder. This brute force attack was successfully executed using the Kali Linux tool “hydra” to obtain the credentials of employee Ashton and gain access to the secret folder. The secret folder contained a file called "connect_to_corp_server."
+
+![hydra](https://github.com/keeslonkf/Red-Team-vs.-Blue-Team/blob/39d081ca13b751d97885985216948dfe3114aa54/RedTeam_Images/hydra.JPG)
+
+![secretFolderLogin](https://github.com/keeslonkf/Red-Team-vs.-Blue-Team/blob/39d081ca13b751d97885985216948dfe3114aa54/RedTeam_Images/SecretFolderLogin.JPG) 
+
+![secretFolder_Dir](https://github.com/keeslonkf/Red-Team-vs.-Blue-Team/blob/39d081ca13b751d97885985216948dfe3114aa54/RedTeam_Images/SecretFolderDirContents.JPG) . 
+
+The next exploit was discovered in a file within the secret folder called "connect_to_corp_server". This file contained the hash of the CEO’s (Ryan) password and instructions on how to access another hidden directory within the server called “webdav”. The contents are below: 
+
+![webDavInstructions](https://github.com/keeslonkf/Red-Team-vs.-Blue-Team/blob/39d081ca13b751d97885985216948dfe3114aa54/RedTeam_Images/webDavInstructions.JPG) 
+
+Ryan's hashed password was copied and input into an online tool called Crack Station. The site uses rainbow tables to compare the input hash to precomputed hashes to "crack" the password. This hash was successfully cracked and privileges were escalated further to the CEO's account. 
+
+![crackstation] 
+
+![webDavLogin](https://github.com/keeslonkf/Red-Team-vs.-Blue-Team/blob/39d081ca13b751d97885985216948dfe3114aa54/RedTeam_Images/webDavLogin.JPG) 
+
+Next, a payload was constructed using msfvenom to create the reverse shell php script to be exploited on the target. 
+
+![msfvenomPayload](https://github.com/keeslonkf/Red-Team-vs.-Blue-Team/blob/39d081ca13b751d97885985216948dfe3114aa54/RedTeam_Images/msfvenomPayload.JPG) 
+
+With the high-level access acquired from Ryan's credentials, a php script was uploaded to the web server to initiate the first step in establishing a reverse shell between the Capstone Server and the Kali attacking machine. 
+
+![uploadShellScript](https://github.com/keeslonkf/Red-Team-vs.-Blue-Team/blob/39d081ca13b751d97885985216948dfe3114aa54/RedTeam_Images/UploadShellScript.jpg)
+
+The ability to upload a .php script is a web misconfiguration vulnerability that was exploited. A general coding best practice is to never allow uploading to a web server unless that is apart of the web application's functionality to the client. If uploading is necessary, uploaded data should undergo scrutiny before being allowed on the web server to ensure the data does not contain malware. 
+
+Finally, a Local File Inclusion (LFI) vulnerability in the web server ensured the success of the reverse shell exploit. Local File Inclusion vulnerabilities work by allowing an uploaded file or script to be executed on the server. In this case, once the code is executed, it sends a meterpreter shell directly back to the attacking machine. This was accomplished using Metasploit in conjunction with the php script using the parameters below. 
+
+![msfSetup1] 
+
+![meterpreterShell](https://github.com/keeslonkf/Red-Team-vs.-Blue-Team/blob/39d081ca13b751d97885985216948dfe3114aa54/RedTeam_Images/meterpreterShell.JPG) 
+
+Once inside, a more stable shell was first established using the command “shell” in the Meterpreter session. Basic linux commands like “cd” and “find” were utilized to search for files containing the word “flag” in the title.
+
+![flagComplete](https://github.com/keeslonkf/Red-Team-vs.-Blue-Team/blob/39d081ca13b751d97885985216948dfe3114aa54/RedTeam_Images/flagComplete.JPG)
 
 ### Post Exploitation
 
