@@ -48,7 +48,7 @@ The assessment uncovered the following critical vulnerabiliies in the target:
 
 ![secretFolder](https://github.com/keeslonkf/Red-Team-vs.-Blue-Team/blob/39d081ca13b751d97885985216948dfe3114aa54/RedTeam_Images/secretFolder.JPG)
 
-## Exploitation
+### Exploitation
 
 - After gathering useful information through recon, the findings prompted the idea of brute forcing employee credentials using the employees listed in the site’s “Meet Our Team” page. 
 - The intention was to find credentials to access this secret folder. 
