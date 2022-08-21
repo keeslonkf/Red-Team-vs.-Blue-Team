@@ -83,7 +83,7 @@ The assessment uncovered the following critical vulnerabiliies in the target:
 
 - Next, a payload was constructed using msfvenom to create the reverse shell php script to be exploited on the target. 
 
-![msfvenomPayload]() 
+![msfvenomPayload](https://github.com/keeslonkf/Red-Team-vs.-Blue-Team/blob/9476b6aff2c7a0769672dc18c197a3981b2956c3/RedTeam_Images/msfvenomPayload.JPG) 
 
 - With the high-level access acquired from Ryan's credentials, a php script was uploaded to the web server to initiate the first step in establishing a reverse shell between the Capstone Server and the Kali attacking machine. 
 - This is exploitation of the web misconfiguration
@@ -96,7 +96,7 @@ The assessment uncovered the following critical vulnerabiliies in the target:
 - A general coding best practice is to never allow uploading to a web server unless that is apart of the web application's functionality to the client. 
 - If uploading is necessary, uploaded data should undergo scrutiny before being allowed on the web server to ensure the data does not contain malware. 
 
-![uploadShellScript]()
+![uploadShellScript](https://github.com/keeslonkf/Red-Team-vs.-Blue-Team/blob/9476b6aff2c7a0769672dc18c197a3981b2956c3/RedTeam_Images/UploadShellScript.jpg)
 
 - Finally, a Local File Inclusion (LFI) vulnerability in the web server ensured the success of the reverse shell exploit. 
 - Local File Inclusion vulnerabilities work by allowing an uploaded file or script to be executed on the server. 
@@ -112,12 +112,10 @@ The assessment uncovered the following critical vulnerabiliies in the target:
 
 - This code forces the target machine to send us a meterpreter shell connection. 
 
-![msfsetup]()
+![msfsetup](https://github.com/keeslonkf/Red-Team-vs.-Blue-Team/blob/9476b6aff2c7a0769672dc18c197a3981b2956c3/RedTeam_Images/msfsetup.JPG)
 
 - Now we execute the script on the victim machine by typing the file path in the folder explorer search bar
 > - dav://192.168.1.105/webdav/reverse_shell.php 
-
-
 
 ![meterpreterShell](https://github.com/keeslonkf/Red-Team-vs.-Blue-Team/blob/39d081ca13b751d97885985216948dfe3114aa54/RedTeam_Images/meterpreterShell.JPG) 
 
