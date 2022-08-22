@@ -1,12 +1,13 @@
-## Penetration Test Engagement in a Virtualized Environment
+## Red Team vs. Blue Team: Red Team Operations Summary
 
-There are several steps involved with penetrating a network: Planning and Reconnaissance, Scanning, Exploitation, Post Exploitation, and Reporting. Once the network has been exploited there are a number of ways an attacker can abuse a system including stealing sensitive data, modifying data on the network, compromising the availability of data for a ransom and leaving a backdoor for perpetual access.
+There are several steps involved with penetrating a network: Planning and Reconnaissance, Scanning, Exploitation, Post Exploitation, and Reporting. Once the network has been exploited there are a number of ways an attacker can abuse a system including stealing sensitive data, modifying data on the network, compromising the availability of data for a ransom and leaving a backdoor for perpetual access. In this lab we employ these methods to test the security of a network.
 
 ![RedTeam_NetworkDiagram](https://github.com/keeslonkf/Red-Team-vs.-Blue-Team/blob/39d081ca13b751d97885985216948dfe3114aa54/RedTeam_Images/network_topology.JPG)
 
 This document contains the following details:
 - Description of the Topology
 - Vulnerability Assessment
+- Recon
 - Exploitation
 - Post-Exploitation
 
